@@ -109,18 +109,26 @@ int main(int argc, char **argv) {
     deserialize_data(argv[1]);
     std::cerr << "All the arrays and bit vectors are loaded.\n\n";
 
-    size_t idx;
-    std::cin >> idx;
+    size_t idx, run_idx, offset_idx, pred_run_head, run_head_idx_in_F;
+    char run_head;
 
-    size_t run_idx = rank_B_L(idx + 1) - 1;
-    size_t offset_idx = idx - select_B_L(run_idx + 1);
+    while (std::cin >> (idx)) {
+        run_idx = rank_B_L(idx + 1) - 1;
+        offset_idx = idx - select_B_L(run_idx + 1);
 
-    char run_head = H_L[run_idx];
-    size_t pred_run_head = (*B_x_ranks[char_to_index[run_head]])(run_idx);
+        run_head = H_L[run_idx];
+        pred_run_head = (*B_x_ranks[char_to_index[run_head]])(run_idx);
 
-    size_t run_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
+        run_head_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
 
-    std::cout << select_B_F(run_idx_in_F + 1) + offset_idx;
+        // TODO: C array definition does not match the definition in the
+        // assignment specs
+        std::cout << "Position in F: "
+                  << select_B_F(rank_B_F(C[char_to_index[run_head]] + 1) +
+                                pred_run_head) +
+                         offset_idx
+                  << std::endl;
+    }
 
     return 0;
 
