@@ -152,10 +152,7 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     
     // TODO: Figure out how to do this part
     // find LF(i) using the "traditional way"
-    size_t run_head = H_L[run_idx_F];
-    size_t pred_run_head = (*B_x_ranks[char_to_index[run_head]])(run_idx_F);
-    size_t run_head_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
-    size_t idx_F =  run_head_idx_in_F + offset_idx_F;
+    size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
 
     std::cerr << "idx_F: " << idx_F + 1 << "\n";
     // create B_FL, and rank_1 and select_1 data structures for it
