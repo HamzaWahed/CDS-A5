@@ -109,6 +109,34 @@ void deserialize_data(char *inputFileName) {
     in_file.close();
 }
 
+sdsl::sd_vector<> build_B_FL(){
+    sdsl::bit_vector B_FL(2*r);
+
+    size_t i_BFL = 0;
+
+    auto it_BF = B_F_sparse.begin();
+    for (auto it_F = B_F_sparse.begin(), it_L = B_L_sparse.begin(); it_F != B_F_sparse.end() && it_L != B_L_sparse.end(); ++it_F, ++it_L, ++it_BF) {
+        if (*it_F == 1 && *it_L == 1) {
+            B_FL[i_BFL] = 0;
+            i_BFL++;
+            B_FL[i_BFL] = 1;
+            i_BFL++;
+        } else if (*it_F == 1) {
+            B_FL[i_BFL] = 1;
+            i_BFL++;
+        } else if (*it_L == 1) {
+            B_FL[i_BFL] = 0;
+            i_BFL++;
+        }
+    }
+
+    sdsl::sd_vector<> B_FL_sd = sdsl::sd_vector<>(B_FL);
+
+    std::cerr << "B_FL_sd: " << B_FL_sd << "\n";
+
+    return B_FL_sd;
+} 
+
 size_t get_rank_0_BFL(sdsl::rank_support_sd<> rank_1_B_FL, size_t i) {
     return i - rank_1_B_FL(i);
 }
@@ -130,7 +158,7 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx, size_t offset_idx) {
     sdsl::rank_support_sd<> rank_1_B_FL = sdsl::rank_support_sd<>(&B_FL);
     sdsl::select_support_sd<> select_1_B_FL = sdsl::select_support_sd<>(&B_FL);
 
-    size_t b = select_1_B_FL(run_F_i + 1);
+    size_t b = select_1_B_FL(run_idx + 1);
     size_t l = get_rank_0_BFL(rank_1_B_FL, b) - 1;
 
     size_t run_in_L = l;
@@ -138,19 +166,14 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx, size_t offset_idx) {
         run_in_L += 1;
     }
 
-    run_LF_i -= 1;
-
-    size_t idx_LF_i = select_B_L(run_LF_i);
+    size_t idx_LF_i = select_B_L(run_idx);
     size_t offset_LF_i = 0;
-    while (idx_LF_i < LF_i) {
+    while (idx_LF_i < f_mapping) {
         idx_LF_i++;
         offset_LF_i++;
     }
 
-    // to display zero-indexed run
-    run_LF_i -= 1;
-
-    return new std::pair(run_in_L, offset_LF_i)
+    return std::pair(run_in_L, offset_LF_i);
 }
 
 int main(int argc, char **argv) {
@@ -160,9 +183,18 @@ int main(int argc, char **argv) {
     deserialize_data(argv[1]);
     std::cerr << "All the arrays and bit vectors are loaded.\n\n";
 
-    B_FL = sdsl::bit_vector(2 * r, 0);
-    rank_B_F = sdsl::rank_support_v<>(&B_FL);
-    select_B_F = sdsl::rank_support_v<>(&B_FL);
+    while (true) {
+        size_t run_idx, offset_idx;
+        std::cerr << "Enter run index and offset index (or -1 -1 to exit): ";
+        std::cin >> run_idx >> offset_idx;
+
+        if (run_idx == static_cast<size_t>(-1) || offset_idx == static_cast<size_t>(-1)) {
+            break;
+        }
+
+        auto result = getRunAndOffset(run_idx, offset_idx);
+        std::cerr << "Run index in L: " << result.first << ", Offset in L: " << result.second << "\n";
+    }
 
     return 0;
 
