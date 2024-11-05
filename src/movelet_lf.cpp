@@ -142,38 +142,38 @@ size_t get_rank_0_BFL(sdsl::rank_support_sd<> rank_1_B_FL, size_t i) {
 }
 
 std::pair<size_t, size_t> getRunAndOffset(size_t run_idx, size_t offset_idx) {
-    size_t pred_run_head, run_head_idx_in_F;
-    char run_head;
+    // assuming that we have LF(i) and run_F(i) as input
+    // ASSUMING 0-INDEXED RUNS AND POSITIONS
+    size_t index_in_F = select_B_F(run_idx + 1) + offset_idx;
+    std::cout << "index_in_F: " << index_in_F << "\n";
 
-    run_head = H_L[run_idx];
-    pred_run_head = (*B_x_ranks[char_to_index[run_head]])(run_idx);
-
-    run_head_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
-
-    size_t f_mapping =
-        select_B_F(rank_B_F(C[char_to_index[run_head]] + 1) + pred_run_head) +
-        offset_idx;
-
+    // create B_FL, and rank_1 and select_1 data structures for it
     sdsl::sd_vector<> B_FL = build_B_FL();
     sdsl::rank_support_sd<> rank_1_B_FL = sdsl::rank_support_sd<>(&B_FL);
-    sdsl::select_support_sd<> select_1_B_FL = sdsl::select_support_sd<>(&B_FL);
-
+    sdsl::select_support_sd <> select_1_B_FL = sdsl::select_support_sd<>(&B_FL);
+    
     size_t b = select_1_B_FL(run_idx + 1);
+    std::cout << "b: " << b << "\n";
     size_t l = get_rank_0_BFL(rank_1_B_FL, b) - 1;
+    std::cout << "l: " << l << "\n";
 
-    size_t run_in_L = l;
-    while (select_B_L(run_in_L) < f_mapping) {
-        run_in_L += 1;
+    
+    while(select_B_L(l) < index_in_F){
+        l += 1;
     }
+    l -= 1;
 
-    size_t idx_LF_i = select_B_L(run_idx);
+    size_t idx_LF_i = select_B_L(l);
     size_t offset_LF_i = 0;
-    while (idx_LF_i < f_mapping) {
+    while(idx_LF_i < index_in_F){
         idx_LF_i++;
         offset_LF_i++;
     }
 
-    return std::pair(run_in_L, offset_LF_i);
+    // to display zero-indexed run
+    l -= 1;
+ 
+    return std::make_pair(l, offset_LF_i);
 }
 
 int main(int argc, char **argv) {
