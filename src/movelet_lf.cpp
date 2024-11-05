@@ -37,8 +37,9 @@ sdsl::select_support_sd<> select_B_L;
 sdsl::rank_support_sd<> rank_B_F;
 sdsl::select_support_sd<> select_B_F;
 
-sdsl::rank_support_v<> rank_B_FL;
-sdsl::select_support_v<> select_B_FL;
+// Rank and select data structures for B_FL
+sdsl::rank_support_sd<> rank_B_FL;
+sdsl::select_support_sd<> select_B_FL;
 
 // Rank data structure for B_x bit vectors
 std::vector<std::unique_ptr<sdsl::rank_support_v<>>> B_x_ranks;
