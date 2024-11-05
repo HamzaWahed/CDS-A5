@@ -37,6 +37,10 @@ add_executable(load src/deserialize.cpp)
 target_link_libraries(load sdsl)
 target_compile_options(load PUBLIC -O2)
 
-add_executable(movelet src/movelet_lf.cpp)
+add_executable(movelet src/lf_movelet.cpp)
 target_link_libraries(movelet sdsl)
 target_compile_options(movelet PUBLIC -O2)
+
+add_executable(lf src/lf.cpp)
+target_link_libraries(lf sdsl)
+target_compile_options(lf PUBLIC -O2)
