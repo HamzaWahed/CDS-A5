@@ -92,7 +92,7 @@ void deserialize_data(char *inputFileName) {
 
 size_t LF_mapping(size_t idx){
 
-    size_t idx, run_idx, offset_idx, pred_run_head, run_head_idx_in_F;
+    size_t run_idx, offset_idx, pred_run_head, run_head_idx_in_F;
     char run_head;
 
     run_idx = rank_B_L(idx + 1) - 1;

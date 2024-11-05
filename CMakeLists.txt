@@ -44,3 +44,7 @@ target_compile_options(movelet PUBLIC -O2)
 add_executable(lf src/lf.cpp)
 target_link_libraries(lf sdsl)
 target_compile_options(lf PUBLIC -O2)
+
+add_executable(BWT_inverse_lf src/BWT_inverse_lf.cpp)
+target_link_libraries(BWT_inverse_lf sdsl)
+target_compile_options(BWT_inverse_lf PUBLIC -O2)
