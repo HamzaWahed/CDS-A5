@@ -32,6 +32,8 @@
 *.app
 build
 load
+lf
+movelet
 
 # CMake files
 CMakeCache.txt
