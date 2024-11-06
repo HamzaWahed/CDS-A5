@@ -111,51 +111,6 @@ void deserialize_data(char *inputFileName) {
     in_file.close();
 }
 
-size_t LF_mapping(size_t run_idx, size_t offset_idx){
-
-    size_t pred_run_head, run_head_idx_in_F;
-    char run_head;
-    run_head = H_L[run_idx];
-    pred_run_head = (*B_x_ranks[char_to_index[run_head]])(run_idx);
-
-    run_head_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
-
-    size_t idx_F = select_B_F(rank_B_F(C[char_to_index[run_head]] + 1) + pred_run_head) + offset_idx;
-
-    return idx_F;
-} 
-
-
-int build_F_column(const std::string& inputFileName) {
-    std::ifstream inFile(inputFileName); // Open the input file
-    if (!inFile) {
-        std::cerr << "Error: Could not open the file " << inputFileName << "\n";
-        return 1;
-    }
-
-    std::string line;
-    std::getline(inFile, line); // Read a single line of characters from the file
-    inFile.close();
-
-    std::vector<char> characters(line.begin(), line.end()); // Convert the line to a vector of characters
-
-    std::sort(characters.begin(), characters.end()); // Sort the characters
-
-    std::ofstream outFile("f_column.txt"); // Open file for writing
-    if (!outFile) {
-        std::cerr << "Error: Could not open the output file.\n";
-        return 1;
-    }
-
-    for (const auto &ch : characters) {
-        outFile << ch; // Write each character to the file
-    }
-
-    outFile.close();
-    std::cout << "Sorted characters have been written to f_column.txt\n";
-    return 0;
-}
-
 // Builds the B_FL bitvector
 sdsl::sd_vector<> build_B_FL(){
     // initialize to 2*r bits
@@ -184,9 +139,6 @@ sdsl::sd_vector<> build_B_FL(){
     // convert to sd_vector so we can easily utilize rank and select
     sdsl::sd_vector<> B_FL_sd = sdsl::sd_vector<>(B_FL);
 
-    // print its value for assurance purposes
-    // std::cerr << "B_FL_sd: " << B_FL_sd << "\n";
-
     return B_FL_sd;
 } 
 
@@ -194,7 +146,6 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
 
     size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
 
-    std::cerr << "idx_F: " << idx_F << "\n";
     // create B_FL, and rank_1 and select_1 data structures for it
     sdsl::sd_vector<> B_FL = build_B_FL();
     sdsl::rank_support_sd<> rank_1_B_FL = sdsl::rank_support_sd<>(&B_FL);
@@ -202,7 +153,6 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     
     // find b and l
     size_t l = select_1_B_FL(run_idx_F + 1) - (run_idx_F + 1);
-    std::cout << "l: " << l << "\n";
 
     // find the correct run
     size_t curr_select; 
@@ -235,11 +185,7 @@ int main(int argc, char** argv) {
     
     // deserailize the data from the file
     deserialize_data(argv[1]);
-    std::cerr << "All the arrays and bit vectors are loaded.\n\n";
-
-    // store f column in a file
-    build_F_column(argv[2]);
-    
+    std::cerr << "All the arrays and bit vectors are loaded.\n\n";    
 
     std::vector<char> result;
     char ch;
@@ -248,7 +194,6 @@ int main(int argc, char** argv) {
     size_t run_L = 0;
     size_t offset_L = 0;
 
-    std::cout << "n: " << n << "\n";
     while(i < n){
         // map to F
         size_t pred_run_head, run_F, offset_F, idx_F;
@@ -269,13 +214,7 @@ int main(int argc, char** argv) {
 
         // find which run and offset in L
         std::tie(run_L, offset_L) = getRunAndOffset(run_F, offset_F);
-        std::cerr << "run_L: " << run_L << ", offset_L: " << offset_L << "\n";
-
-        // Print the result vector 
-        for (const auto& c : result) {
-            std::cout << c;
-        }
-        std::cout << std::endl;
+        
     }
 
     // Print the result vector after the while loop terminates
