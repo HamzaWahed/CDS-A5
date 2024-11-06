@@ -149,34 +149,45 @@ size_t get_rank_0_BFL(sdsl::rank_support_sd<> rank_1_B_FL, size_t i) {
 }
 
 std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F) {
-  
-    size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
 
-    std::cerr << "idx_F: " << idx_F + 1 << "\n";
+    if(run_idx_F == 0 && offset_idx_F == 0){
+        return std::make_pair(0, 0);
+    }
+
+    size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
+    std::cout << "Index in F: " << idx_F << std::endl;
     // create B_FL, and rank_1 and select_1 data structures for it
     sdsl::sd_vector<> B_FL = build_B_FL();
     sdsl::rank_support_sd<> rank_1_B_FL = sdsl::rank_support_sd<>(&B_FL);
     sdsl::select_support_sd <> select_1_B_FL = sdsl::select_support_sd<>(&B_FL);
     
     // find b and l
-    size_t l = select_1_B_FL(run_idx_F + 1) - (run_idx_F + 1);
-    // std::cout << "l: " << l << "\n";
+    size_t l = select_1_B_FL(run_idx_F + 1) - (run_idx_F + 1) - 1;
+    std::cout << "l: " << l << std::endl;
 
+    size_t offset_L = 0;
+    size_t run_L = 0;
     // find the correct run
-    while(select_B_L(l) < idx_F){
+    size_t l_index = select_B_L(l + 1); 
+    size_t prev_l_index = 0;
+    while(l_index < idx_F){
         l += 1;
+        if (l >= r){
+            break;
+        }
+        prev_l_index = l_index;
+        l_index = select_B_L(l + 1);
     }
-    l -= 2; 
+    // run_L = l-=1;    
+    std::cout << "Run: " << run_L << std::endl;
 
-    // find the correct index in that run
-    size_t idx_LF_i = select_B_L(l+1);
-    size_t offset_LF_i = 0;
-    while(idx_LF_i < idx_F){
-        idx_LF_i++;
-        offset_LF_i++;
+    size_t curr_idx = prev_l_index;
+    while(curr_idx < idx_F){
+        curr_idx++;
+        offset_L++;
     }
 
-    return std::make_pair(l, offset_LF_i);
+    return std::make_pair(l, offset_L);
 }
 
 int main(int argc, char **argv) {
