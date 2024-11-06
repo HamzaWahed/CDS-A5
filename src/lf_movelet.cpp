@@ -149,9 +149,7 @@ size_t get_rank_0_BFL(sdsl::rank_support_sd<> rank_1_B_FL, size_t i) {
 }
 
 std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F) {
-    
-    // TODO: Figure out how to do this part
-    // find LF(i) using the "traditional way"
+  
     size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
 
     std::cerr << "idx_F: " << idx_F + 1 << "\n";
