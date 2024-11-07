@@ -169,19 +169,21 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     size_t run_L = 0;
     // find the correct run
     size_t l_index = select_B_L(l + 1); 
-    size_t prev_l_index = 0;
-    while(l_index < idx_F){
+    size_t prev_l_index = l_index;
+    while(l_index <= idx_F){
+        std::cout << "l_index: " << l_index << std::endl;
+        prev_l_index = l_index;
         l += 1;
         if (l >= r){
             break;
         }
-        prev_l_index = l_index;
         l_index = select_B_L(l + 1);
     }
-    // run_L = l-=1;    
+    run_L = l-=1;    
     std::cout << "Run: " << run_L << std::endl;
 
     size_t curr_idx = prev_l_index;
+    std::cout << "Previous l_index: " << prev_l_index << std::endl;
     while(curr_idx < idx_F){
         curr_idx++;
         offset_L++;
