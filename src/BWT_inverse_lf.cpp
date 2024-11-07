@@ -158,7 +158,6 @@ int main(int argc, char** argv) {
         std::cout << c;
     }
     std::cout << std::endl;
-    std::cout << "Length of result: " << result.size() << std::endl;
 
     return 0;
 

@@ -149,7 +149,6 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     }
 
     size_t idx_F =  select_B_F(run_idx_F + 1) + offset_idx_F;
-    std::cout << "Index in F: " << idx_F << std::endl;
     // create B_FL, and rank_1 and select_1 data structures for it
     sdsl::sd_vector<> B_FL = build_B_FL();
     sdsl::rank_support_sd<> rank_1_B_FL = sdsl::rank_support_sd<>(&B_FL);
@@ -157,7 +156,6 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     
     // find b and l
     size_t l = select_1_B_FL(run_idx_F + 1) - (run_idx_F + 1) - 1;
-    std::cout << "l: " << l << std::endl;
 
     size_t offset_L = 0;
     size_t run_L = 0;
@@ -165,7 +163,6 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
     size_t l_index = select_B_L(l + 1); 
     size_t prev_l_index = l_index;
     while(l_index <= idx_F){
-        std::cout << "l_index: " << l_index << std::endl;
         prev_l_index = l_index;
         l += 1;
         if (l >= r){
@@ -174,10 +171,8 @@ std::pair<size_t, size_t> getRunAndOffset(size_t run_idx_F, size_t offset_idx_F)
         l_index = select_B_L(l + 1);
     }
     run_L = l-=1;    
-    std::cout << "Run: " << run_L << std::endl;
 
     size_t curr_idx = prev_l_index;
-    std::cout << "Previous l_index: " << prev_l_index << std::endl;
     while(curr_idx < idx_F){
         curr_idx++;
         offset_L++;
@@ -230,8 +225,6 @@ int main(int argc, char** argv) {
         std::cout << c;
     }
     std::cout << std::endl;
-    std::cout << "Length of result: " << result.size() << std::endl;
-
 
     return 0;
 
