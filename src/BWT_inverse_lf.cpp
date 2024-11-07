@@ -128,6 +128,7 @@ int main(int argc, char** argv) {
 
     clock_t startTime = clock();
     while(i < n){
+        printf("%.2f%%\r", (double)i/(double)n);
         // map to F
         size_t idx_F, run_idx, offset_idx, pred_run_head, run_head_idx_in_F;
         char run_head;
