@@ -197,6 +197,7 @@ int main(int argc, char** argv) {
     size_t run_L = 0;
     size_t offset_L = 0;
 
+    clock_t startTime = clock();
     while(i < n){
         // map to F
         size_t pred_run_head, run_F, offset_F, idx_F;
@@ -219,12 +220,14 @@ int main(int argc, char** argv) {
         std::tie(run_L, offset_L) = getRunAndOffset(run_F, offset_F);
         
     }
+    clock_t endTime = clock();
 
     // Print the result vector after the while loop terminates
     for (const auto& c : result) {
         std::cout << c;
     }
     std::cout << std::endl;
+    std::cout << "Time Elapsed: " << (endTime - startTime) << std::endl << std::endl;
 
     return 0;
 

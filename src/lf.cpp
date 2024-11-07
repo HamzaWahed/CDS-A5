@@ -110,11 +110,13 @@ int main(int argc, char **argv) {
     deserialize_data(argv[1]);
     std::cerr << "All the arrays and bit vectors are loaded.\n\n";
 
-    size_t idx, run_idx, offset_idx, pred_run_head, run_head_idx_in_F;
+    size_t idx, run_idx, offset_idx, pred_run_head, run_head_idx_in_F, pos_in_F;
     char run_head;
 
     std::cerr << "Enter position in L: ";
     while (std::cin >> (idx)) {
+        clock_t startTime = clock();
+
         run_idx = rank_B_L(idx + 1) - 1;
         offset_idx = idx - select_B_L(run_idx + 1);
 
@@ -123,13 +125,19 @@ int main(int argc, char **argv) {
 
         run_head_idx_in_F = C[char_to_index[run_head]] + pred_run_head;
 
+        pos_in_F = select_B_F(rank_B_F(C[char_to_index[run_head]] + 1) +
+                                pred_run_head) +
+                         offset_idx;
+
+        clock_t endTime = clock();
+
+        std::cout << "run_idx: " << run_idx << std::endl
+                    << "offset_idx: " << offset_idx << std::endl;
+
         // TODO: C array definition does not match the definition in the
         // assignment specs
-        std::cout << "Position in F: "
-                  << select_B_F(rank_B_F(C[char_to_index[run_head]] + 1) +
-                                pred_run_head) +
-                         offset_idx
-                  << std::endl;
+        std::cout << "Position in F: " << pos_in_F << std::endl;
+        std::cout << "Time Elapsed: " << (endTime - startTime) << std::endl << std::endl;
         std::cerr << "Enter position in L: ";
     }
     return 0;
